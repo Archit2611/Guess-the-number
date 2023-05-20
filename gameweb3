@@ -1,0 +1,29 @@
+Pragma solidity ^0.8.0;
+
+contract GuessingGame {
+    uint public randomNumber;
+    address public winner;
+    bool public gameEnded;
+    
+    constructor() {
+        gameEnded = true;
+    }
+    
+    function startGame(uint range) public {
+        require(gameEnded, "Game is already in progress");
+        require(range > 1, "Range should be greater than 1");
+        
+        randomNumber = uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % range + 1;
+        gameEnded = false;
+    }
+    
+    function makeGuess(uint guess) public {
+        require(!gameEnded, "Game has not started");
+        require(guess > 0, "Guess should be greater than 0");
+        
+        if (guess == randomNumber) {
+            winner = msg.sender;
+            gameEnded = true;
+        }
+    }
+}
